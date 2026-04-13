@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>云养兔 · 瑶乡萌兔</title>
+    <!-- Font Awesome 6 (仅用于内部图标，封面已移除emoji) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: #F0EDE6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+        }
+
+        /* 手机容器 */
+        .phone {
+            width: 375px;
+            background-color: #FFFCF8;
+            border-radius: 42px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 700px;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .phone::-webkit-scrollbar {
+            width: 4px;
+        }
+        .phone::-webkit-scrollbar-track {
+            background: #F1E9E0;
+        }
+        .phone::-webkit-scrollbar-thumb {
+            background: #E2C7A3;
+            border-radius: 10px;
+        }
+
+        /* ---------- 封面 (吉卜力风格兔子) ---------- */
+        .cover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #E9F0E4, #DDE8D5);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease;
+            font-family: inherit;
+        }
+        /* 简洁的兔耳装饰 (仅作为氛围) */
+        .cover-overlay::before {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255,235,205,0.3) 0%, rgba(255,235,205,0) 70%);
+            border-radius: 50%;
+            top: 20px;
+            left: 20px;
+        }
+        .cover-overlay::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(200,220,180,0.25) 0%, rgba(200,220,180,0) 70%);
+            border-radius: 50%;
+            bottom: 30px;
+            right: 20px;
+        }
+        .cover-content {
+            text-align: center;
+            background: rgba(255, 252, 245, 0.92);
+            border-radius: 80px;
+            padding: 28px 20px;
+            width: 290px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+            z-index: 2;
+            border: 1px solid rgba(210, 180, 140, 0.4);
+            backdrop-filter: blur(2px);
+        }
+        /* 吉卜力风格兔子 SVG */
+        .ghibli-rabbit {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 12px;
+            display: block;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.08));
+        }
+        .cover-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #5D3A1A;
+            letter-spacing: 3px;
+            margin-top: 6px;
+            font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+            text-shadow: 0 1px 2px rgba(255,255,200,0.8);
+        }
+        .yao-text {
+            background: #8B5A2B30;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #7B4A2A;
+            margin: 12px 0 8px;
+            letter-spacing: 1px;
+            backdrop-filter: blur(2px);
+        }
+        .cover-sub {
+            color: #8F6B3E;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .enter-btn {
+            background: #C47B44;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .enter-btn:active { transform: scale(0.96); background: #A56232; }
+
+        /* 状态栏 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 590;
+            color: #1E2A2F;
+            background: #FFFCF8;
+            padding: 12px 16px 6px 16px;
+            border-bottom: 1px solid #FFEFE0;
+        }
+
+        /* 底部主导航栏 */
+        .bottom-nav {
+            background: #FFFCF5;
+            border-top: 1px solid #F7E4D2;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 12px 14px;
+            border-radius: 28px 28px 0 0;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: #C8B08C;
+            gap: 4px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .nav-item.active {
+            color: #E67E22;
+            font-weight: 600;
+        }
+        .nav-item i { font-size: 20px; }
+
+        /* 主视图容器 */
+        .main-view {
+            padding: 0 0 12px 0;
+        }
+        .view-pane {
+            display: none;
+            animation: fade 0.2s ease;
+        }
+        .view-pane.active-view {
+            display: block;
+        }
+
+        /* 互动页面内部的二级tab */
+        .sub-tabs {
+            display: flex;
+            background: #FFFCF8;
+            padding: 8px 16px 0 16px;
+            gap: 28px;
+            border-bottom: 2px solid #F7EADC;
+        }
+        .sub-tab {
+            font-size: 16px;
+            font-weight: 600;
+            padding-bottom: 8px;
+            color: #BFA98E;
+            cursor: pointer;
+        }
+        .sub-tab.active {
+            color: #E67E22;
+            border-bottom: 3px solid #E67E22;
+        }
+        .sub-page {
+            display: none;
+            padding: 12px 16px 20px;
+        }
+        .sub-page.active-sub {
+            display: block;
+        }
+
+        /* 全局用户信息卡 */
+        .global-profile {
+            background: #FFF8F0;
+            border-radius: 28px;
+            padding: 12px 16px;
+            margin: 12px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 6px 12px;
+            text-align: center;
+            flex: 1;
+        }
+        .stat-label { font-size: 11px; color: #B48C5C; }
+        .stat-value { font-size: 18px; font-weight: 800; color: #3C2A1F; }
+
+        /* 卡片与按钮 */
+        .card-banner {
+            background: linear-gradient(135deg, #FFE5B4, #FFD6A5);
+            border-radius: 28px;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+        }
+        .btn-orange {
+            background: #FFA559;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .action-btn {
+            background: #FEF3E8;
+            border: none;
+            padding: 12px 0;
+            border-radius: 48px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #B6531A;
+            cursor: pointer;
+        }
+        .booking-card {
+            background: white;
+            border-radius: 24px;
+            padding: 12px;
+            border: 1px solid #FDEBD8;
+            margin-bottom: 12px;
+        }
+        .friend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #FFEAD8;
+        }
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #FFF9F0;
+            margin: 6px 0;
+            border-radius: 40px;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2E241F;
+            color: #FFF3E6;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            z-index: 200;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal.show { visibility: visible; opacity: 1; }
+        .modal-card {
+            background: #FFFCF8;
+            width: 310px;
+            border-radius: 48px;
+            padding: 20px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .option-btn {
+            background: #FEF3E8;
+            border: 1px solid #F0CFB0;
+            padding: 10px;
+            border-radius: 40px;
+            margin: 6px 0;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-modal { background: #D4C0AA; border: none; padding: 6px 20px; border-radius: 40px; margin-top: 12px; }
+        h4 { margin: 10px 0 6px; color: #7B4A2A; }
+    </style>
+</head>
+<body>
+<div class="phone" id="phoneContainer">
+    <!-- 封面层 (吉卜力风格兔子，无emoji，无“瑶乡灵兔”) -->
+    <div class="cover-overlay" id="coverOverlay">
+        <div class="cover-content">
+            <!-- 吉卜力风格兔子 SVG -->
+            <svg class="ghibli-rabbit" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- 背景草地氛围 -->
+                <ellipse cx="70" cy="115" rx="50" ry="12" fill="#C1D4A8" opacity="0.6"/>
+                <ellipse cx="70" cy="112" rx="42" ry="8" fill="#DDE8C5" opacity="0.7"/>
+                <!-- 兔子身体 (毛茸茸) -->
+                <ellipse cx="70" cy="88" rx="30" ry="28" fill="#F8E4CC" stroke="#D9B28C" stroke-width="1.2"/>
+                <!-- 兔子头部 -->
+                <ellipse cx="70" cy="52" rx="28" ry="26" fill="#F8E4CC" stroke="#D9B28C" stroke-width="1"/>
+                <!-- 左耳 -->
+                <path d="M52 26 Q44 -4 56 -8 Q64 -10 62 12 Q60 24 58 28" fill="#F8E4CC" stroke="#D9B28C" stroke-width="1"/>
+                <path d="M54 22 Q48 0 56 -4 Q60 -5 59 14" fill="#FFC4B3" opacity="0.6"/>
+                <!-- 右耳 -->
+                <path d="M88 26 Q96 -4 84 -8 Q76 -10 78 12 Q80 24 82 28" fill="#F8E4CC" stroke="#D9B28C" stroke-width="1"/>
+                <path d="M86 22 Q92 0 84 -4 Q80 -5 81 14" fill="#FFC4B3" opacity="0.6"/>
+                <!-- 腮红 -->
+                <circle cx="52" cy="58" r="7" fill="#FFB7A8" opacity="0.5"/>
+                <circle cx="88" cy="58" r="7" fill="#FFB7A8" opacity="0.5"/>
+                <!-- 眼睛 (吉卜力风格大眼) -->
+                <ellipse cx="58" cy="48" rx="6.5" ry="7.5" fill="#2D2B26"/>
+                <ellipse cx="82" cy="48" rx="6.5" ry="7.5" fill="#2D2B26"/>
+                <circle cx="60" cy="46" r="2.5" fill="white"/>
+                <circle cx="84" cy="46" r="2.5" fill="white"/>
+                <circle cx="56.5" cy="49.5" r="1.2" fill="white"/>
+                <circle cx="80.5" cy="49.5" r="1.2" fill="white"/>
+                <!-- 鼻子 -->
+                <ellipse cx="70" cy="58" rx="3" ry="2.5" fill="#DD8A6E"/>
+                <!-- 嘴巴 -->
+                <path d="M66 61 Q70 65 74 61" stroke="#B35F42" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <!-- 胡须 -->
+                <line x1="44" y1="54" x2="28" y2="52" stroke="#BFA98E" stroke-width="0.8" opacity="0.6"/>
+                <line x1="44" y1="58" x2="28" y2="60" stroke="#BFA98E" stroke-width="0.8" opacity="0.6"/>
+                <line x1="96" y1="54" x2="112" y2="52" stroke="#BFA98E" stroke-width="0.8" opacity="0.6"/>
+                <line x1="96" y1="58" x2="112" y2="60" stroke="#BFA98E" stroke-width="0.8" opacity="0.6"/>
+                <!-- 胸前小花装饰 (吉卜力森林感) -->
+                <circle cx="70" cy="78" r="6" fill="#F2CD7D" stroke="#D9A56C" stroke-width="1"/>
+                <circle cx="68" cy="76" r="2" fill="#FFE6B0"/>
+                <circle cx="72" cy="76" r="2" fill="#FFE6B0"/>
+                <circle cx="70" cy="80" r="2.5" fill="#E8B15C"/>
+                <!-- 脚脚 -->
+                <ellipse cx="56" cy="108" rx="10" ry="6" fill="#F8E4CC" stroke="#D9B28C" stroke-width="0.8"/>
+                <ellipse cx="84" cy="108" rx="10" ry="6" fill="#F8E4CC" stroke="#D9B28C" stroke-width="0.8"/>
+                <!-- 周围小叶片 -->
+                <path d="M30 92 Q34 84 38 92" stroke="#89A65E" fill="#A9C77D" stroke-width="0.8"/>
+                <path d="M102 98 Q106 90 110 98" stroke="#89A65E" fill="#A9C77D" stroke-width="0.8"/>
+                <path d="M110 82 Q114 76 118 82" stroke="#89A65E" fill="#A9C77D" stroke-width="0.8"/>
+            </svg>
+            <div class="cover-title">云养兔</div>
+            <div class="yao-text">✨ 瑶乡萌兔 ✨</div>
+            <div class="cover-sub">连南非遗 · 萌兔共富</div>
+            <button class="enter-btn" id="enterBtn">进入兔舍 🐇</button>
+        </div>
+    </div>
+
+    <!-- 主应用 -->
+    <div id="mainApp" style="display: none;">
+        <div class="status-bar"><span>9:41</span><span><i class="fas fa-signal"></i> <i class="fas fa-battery-full"></i></span></div>
+        
+        <!-- 全局资产 -->
+        <div class="global-profile">
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-label">🥕 胡萝卜币</div><div class="stat-value" id="carrotBalance">1580</div></div>
+                <div class="stat-card"><div class="stat-label">💖 亲密度</div><div class="stat-value" id="intimacyLevel">Lv.5</div><div id="intimacyExpBar" style="font-size:10px;">❤️ 246/500</div></div>
+            </div>
+        </div>
+
+        <!-- 底部导航控制的主视图 -->
+        <div class="main-view">
+            <!-- 互动视图 (包含二级tab: 互动/预约/社区) -->
+            <div id="interactionView" class="view-pane active-view">
+                <div class="sub-tabs">
+                    <div class="sub-tab active" data-sub="interactSub">互动</div>
+                    <div class="sub-tab" data-sub="bookingSub">预约</div>
+                    <div class="sub-tab" data-sub="communitySub">社区</div>
+                </div>
+                <!-- 互动子页面 -->
+                <div id="interactSub" class="sub-page active-sub">
+                    <div class="card-banner"><span><i class="fas fa-gamepad"></i> 挑战！赢积分！</span><button class="btn-orange" id="challengeBtn">⚡ 立即挑战</button></div>
+                    <div class="card-banner" style="background:#FFEFE2;"><span><i class="fas fa-graduation-cap"></i> 非遗知识竞赛</span><button class="btn-orange" id="quizBtn" style="background:#C18F5B;">📖 答题赢🥕</button></div>
+                    <!-- 排行榜卡片 -->
+                    <div class="booking-card" style="background:#FFF4E8;">
+                        <div style="display:flex; justify-content:space-between;"><strong>🏆 云端守护榜 (亲密度排行)</strong><span style="font-size:11px;">Top Cloud Keepers</span></div>
+                        <div id="rankList"></div>
+                        <div style="font-size:10px; text-align:center; margin-top:6px;">✨ 互动越多，排名越高 ✨</div>
+                    </div>
+                    <div class="action-grid">
+                        <button class="action-btn" id="feedCarrotBtn"><i class="fas fa-carrot"></i> 喂胡萝卜</button>
+                        <button class="action-btn" id="cleanPenBtn"><i class="fas fa-broom"></i> 清理兔舍</button>
+                        <button class="action-btn" id="laserToyBtn"><i class="fas fa-lightbulb"></i> 智能激光玩具</button>
+                        <button class="action-btn" id="aiChatBtn"><i class="fas fa-microphone-alt"></i> AI语音聊天</button>
+                    </div>
+                </div>
+                <!-- 预约子页面 -->
+                <div id="bookingSub" class="sub-page">
+                    <div class="booking-card"><div><strong>🥣 喂食预约</strong> <span id="slotLeft">剩余5次</span></div><div>✨ +5亲密度 +10胡萝卜</div><button class="btn-orange" id="feedBookingBtn" style="width:100%;">立即预约</button></div>
+                    <div class="booking-card"><div><strong>🍪 加餐小零食</strong> (消耗15🥕 +8❤️)</div><button class="btn-orange" id="snackBookingBtn">预约零食</button></div>
+                    <div class="booking-card"><div><strong>🎵 音乐哄睡</strong> (+8亲密度)</div><button class="btn-orange" id="musicBookingBtn">预约哄睡</button></div>
+                    <div class="booking-card"><div><strong>📋 我的预约记录</strong></div><div id="myBookingsList">暂无预约</div></div>
+                </div>
+                <!-- 社区子页面 -->
+                <div id="communitySub" class="sub-page">
+                    <div class="friend-list" style="background:#FEFAF5; border-radius:28px; padding:12px;">
+                        <div class="friend-item"><div><span>🐇 nita</span><div>互动值 635</div></div><button class="friend-gift" data-friend="nita" style="background:#FFE0C0; border:none; border-radius:30px; padding:6px 12px;">🎁 送胡萝卜</button></div>
+                        <div class="friend-item"><div><span>🐰 miny</span><div>互动值 337</div></div><button class="friend-gift" data-friend="miny" style="background:#FFE0C0; border:none; border-radius:30px; padding:6px 12px;">🎁 送胡萝卜</button></div>
+                        <div class="friend-item"><div><span>🐣 小糯米</span><div>互动值 892</div></div><button class="friend-gift" data-friend="小糯米" style="background:#FFE0C0; border:none; border-radius:30px; padding:6px 12px;">🎁 送胡萝卜</button></div>
+                    </div>
+                    <div class="card-banner" style="background:#FFF0E5;"><span><i class="fas fa-users"></i> 拜访兔友 · 离线留言</span><button class="btn-orange" id="visitOfflineBtn" style="background:#B67B4A;">去串门</button></div>
+                </div>
+            </div>
+
+            <!-- 积分视图 -->
+            <div id="pointsView" class="view-pane">
+                <div class="booking-card">
+                    <div><strong>🥕 我的胡萝卜币</strong> <span id="pointsBalance" style="font-size:22px; font-weight:800;">1580</span></div>
+                    <div style="font-size:12px;">📊 积分获取记录</div>
+                    <div id="pointsHistory" style="max-height:200px; overflow-y:auto; margin-top:10px;"></div>
+                </div>
+                <div class="card-banner"><span>🏅 累计互动值</span><span id="totalIntimacyVal">2460</span></div>
+                <div class="booking-card"><strong>📈 积分排行榜</strong><div id="pointsRankList"></div></div>
+            </div>
+
+            <!-- 兑换视图 -->
+            <div id="redemptionView" class="view-pane">
+                <div class="booking-card"><strong>✨ 胡萝卜兑换商城 ✨</strong>
+                    <div id="shopItems"></div>
+                </div>
+            </div>
+
+            <!-- 我的视图 -->
+            <div id="centerView" class="view-pane">
+                <div class="booking-card">
+                    <div><strong><i class="fas fa-user-circle"></i> 我的信息</strong></div>
+                    <div>昵称: <span id="nicknameDisplay">绒团团</span> <button id="editNicknameBtn" style="background:none; border:none; color:#E67E22;"><i class="fas fa-pen"></i> 修改</button></div>
+                    <div>兔舍ID: 8888🐇</div>
+                    <div>注册时间: 2023-01-01</div>
+                </div>
+                <div class="booking-card"><strong>📦 我的订单</strong><div id="myOrdersList">暂无订单</div></div>
+                <div class="booking-card"><strong>📞 服务中心 & 反馈</strong><div><button class="btn-orange" id="feedbackBtn">意见反馈</button></div></div>
+            </div>
+        </div>
+
+        <!-- 底部导航栏 -->
+        <div class="bottom-nav">
+            <div class="nav-item" data-view="interaction"><i class="fas fa-heart"></i><span>互动</span></div>
+            <div class="nav-item" data-view="points"><i class="fas fa-coins"></i><span>积分</span></div>
+            <div class="nav-item" data-view="redemption"><i class="fas fa-gift"></i><span>兑换</span></div>
+            <div class="nav-item" data-view="center"><i class="fas fa-store"></i><span>我的</span></div>
+        </div>
+    </div>
+</div>
+<div id="toastMsg" class="toast-msg"></div>
+<div id="quizModal" class="modal"><div class="modal-card"><div id="modalTitle"></div><div id="questionArea"></div><div id="quizResult"></div><button class="close-modal" id="closeModalBtn">关闭</button></div></div>
+
+<script>
+    // ------------------- 大规模非遗题库 (模拟大数据，含连南瑶族等) -------------------
+    const fullQuizDB = [
+        { question: "中国非物质文化遗产“昆曲”发源于哪个省份？", options: ["浙江", "江苏", "上海", "安徽"], answer: 1 },
+        { question: "以下哪一项属于中国蚕桑丝织技艺的代表？", options: ["蜀锦", "云锦", "宋锦", "以上都是"], answer: 3 },
+        { question: "“二十四节气”正式列入非遗名录是哪一年？", options: ["2016", "2015", "2014", "2017"], answer: 0 },
+        { question: "皮影戏利用了什么原理进行表演？", options: ["光影成像", "木偶操控", "纸偶折叠", "镜面反射"], answer: 0 },
+        { question: "中国书法被誉为“天下第一行书”的是？", options: ["兰亭序", "祭侄文稿", "寒食帖", "洛神赋"], answer: 0 },
+        { question: "“侗族大歌”是一种什么形式的音乐？", options: ["多声部合唱", "独唱", "器乐合奏", "说唱"], answer: 0 },
+        { question: "剪纸艺术中“蔚县剪纸”特色是什么？", options: ["点彩染色", "单色镂空", "立体折纸", "金属雕刻"], answer: 0 },
+        { question: "端午节赛龙舟纪念谁？", options: ["屈原", "伍子胥", "曹娥", "介子推"], answer: 0 },
+        { question: "“花儿”民歌主要流传于？", options: ["西北", "江南", "客家", "蒙古"], answer: 0 },
+        { question: "瑶族传统服饰中常见的刺绣工艺被称为？", options: ["瑶绣", "苗绣", "壮锦", "侗绣"], answer: 0 },
+        { question: "连南瑶族最具代表性的节日是？", options: ["盘王节", "火把节", "泼水节", "三月三"], answer: 0 },
+        { question: "瑶族非遗“长鼓舞”使用的乐器主要是？", options: ["长鼓", "芦笙", "铜鼓", "唢呐"], answer: 0 },
+        { question: "以下哪项是广东连南瑶族自治县的特色非遗？", options: ["瑶族耍歌堂", "英石假山", "佛山剪纸", "潮州木雕"], answer: 0 },
+        { question: "瑶绣中常见的八角花图案象征什么？", options: ["太阳与吉祥", "月亮", "星辰", "爱情"], answer: 0 },
+        { question: "“瑶族银饰”制作技艺属于？", options: ["国家级非遗", "省级非遗", "市级非遗", "县级非遗"], answer: 0 },
+        { question: "中国非遗“南音”主要流行于哪个地区？", options: ["福建泉州", "广东潮州", "浙江温州", "台湾"], answer: 0 },
+        { question: "“广东醒狮”属于哪类非遗？", options: ["传统舞蹈", "传统体育", "民俗", "曲艺"], answer: 0 },
+        { question: "“粤剧”被列入非遗的时间是？", options: ["2009年", "2008年", "2010年", "2011年"], answer: 0 },
+        { question: "连南瑶族“开耕节”一般在农历几月？", options: ["三月", "二月", "四月", "五月"], answer: 0 },
+        { question: "以下哪种是瑶族油茶的传统配料？", options: ["阴米", "花生", "姜", "以上都是"], answer: 3 },
+        { question: "“瑶族刺绣”纹样中，马头纹代表什么？", options: ["财富与力量", "爱情", "智慧", "平安"], answer: 0 },
+        { question: "“盘王节”是瑶族祭祀哪位祖先？", options: ["盘王", "蚩尤", "炎帝", "黄帝"], answer: 0 },
+        { question: "连南千年瑶寨位于哪个省？", options: ["广东", "广西", "湖南", "云南"], answer: 0 },
+        { question: "瑶族传统建筑特点是？", options: ["吊脚楼", "土楼", "碉楼", "窑洞"], answer: 0 },
+        { question: "非遗“瑶族医药”主要利用什么治疗？", options: ["草药", "针灸", "推拿", "拔罐"], answer: 0 },
+        { question: "“广东凉茶”传统配方被列入？", options: ["国家级非遗", "省级非遗", "市级", "区级"], answer: 0 },
+        { question: "“蔡李佛拳”发源于哪里？", options: ["广东江门", "佛山", "广州", "汕头"], answer: 0 },
+        { question: "以下哪个是瑶族爱情信物？", options: ["绣花袋", "银手镯", "长鼓", "芦笙"], answer: 0 },
+        { question: "“瑶族民歌”常用哪种唱法？", options: ["真假声结合", "纯假声", "纯真声", "说唱"], answer: 0 },
+        { question: "连南“稻田鱼”节庆活动与什么相关？", options: ["农耕文化", "祭祀", "婚礼", "成年礼"], answer: 0 },
+        { question: "“瑶族服饰”中女性头饰“帕铳”流行于？", options: ["排瑶", "过山瑶", "平地瑶", "蓝靛瑶"], answer: 0 },
+        { question: "吉卜力风格动画《龙猫》中，小梅遇到的龙猫居住在？", options: ["大樟树", "山洞", "神社", "河边"], answer: 0 }
+    ];
+    
+    // 玩家数据
+    let carrot = 1580;
+    let intimacyExp = 246;
+    let intimacyLevel = 5;
+    let feedingSlots = 5;
+    let myBookings = [];
+    let pointsHistory = [];
+    let myOrders = [];
+    let nickname = "绒团团";
+    
+    // 排行榜数据
+    let rankUsers = [
+        { name: "🐰 小糯米", intimacy: 1892, carrot: 3400 },
+        { name: "🐇 nita", intimacy: 1635, carrot: 2780 },
+        { name: "🐣 云朵兔", intimacy: 1420, carrot: 2100 },
+        { name: "🌸 绒团团", intimacy: 1246, carrot: 1580 },
+        { name: "🍃 miny", intimacy: 937, carrot: 990 }
+    ];
+    
+    function updateRankList() {
+        const sorted = [...rankUsers].sort((a,b)=>b.intimacy - a.intimacy);
+        let html = '';
+        sorted.forEach((u,idx) => {
+            html += `<div class="rank-item"><span>${idx+1}. ${u.name}</span><span>❤️ ${u.intimacy}</span><span>🥕 ${u.carrot}</span></div>`;
+        });
+        document.getElementById('rankList').innerHTML = html;
+        if(document.getElementById('pointsRankList')) document.getElementById('pointsRankList').innerHTML = html.slice(0,200);
+    }
+    function updateUserRank() {
+        const userIdx = rankUsers.findIndex(u=>u.name.includes("绒团团") || u.name===nickname);
+        if(userIdx>=0){
+            rankUsers[userIdx].intimacy = (intimacyLevel-1)*500 + (intimacyExp%500);
+            rankUsers[userIdx].carrot = carrot;
+        } else {
+            rankUsers.push({ name: nickname, intimacy: (intimacyLevel-1)*500 + (intimacyExp%500), carrot: carrot });
+        }
+        updateRankList();
+    }
+    
+    function updateUI() {
+        document.getElementById('carrotBalance').innerText = Math.floor(carrot);
+        document.getElementById('pointsBalance') && (document.getElementById('pointsBalance').innerText = Math.floor(carrot));
+        document.getElementById('intimacyLevel').innerText = `Lv.${intimacyLevel}`;
+        let curExp = intimacyExp % 500;
+        document.getElementById('intimacyExpBar').innerHTML = `❤️ ${curExp}/500`;
+        document.getElementById('slotLeft') && (document.getElementById('slotLeft').innerText = `剩余${feedingSlots}次`);
+        if(feedingSlots<=0 && document.getElementById('feedBookingBtn')) document.getElementById('feedBookingBtn').disabled = true;
+        else if(document.getElementById('feedBookingBtn')) document.getElementById('feedBookingBtn').disabled = false;
+        let bookingsHtml = myBookings.length? myBookings.map(b=>`<div>✅ ${b.name} (${b.time})</div>`).join('') : "暂无预约";
+        if(document.getElementById('myBookingsList')) document.getElementById('myBookingsList').innerHTML = bookingsHtml;
+        if(document.getElementById('myOrdersList')) document.getElementById('myOrdersList').innerHTML = myOrders.length? myOrders.map(o=>`<div>🎁 ${o.name} -${o.cost}🥕</div>`).join('') : "暂无订单";
+        if(document.getElementById('nicknameDisplay')) document.getElementById('nicknameDisplay').innerText = nickname;
+        let historyHtml = pointsHistory.length? pointsHistory.slice(-8).reverse().map(h=>`<div>${h.desc}: ${h.change}🥕</div>`).join('') : "<div>暂无记录，参加挑战获取积分~</div>";
+        if(document.getElementById('pointsHistory')) document.getElementById('pointsHistory').innerHTML = historyHtml;
+        updateUserRank();
+        document.getElementById('totalIntimacyVal') && (document.getElementById('totalIntimacyVal').innerText = (intimacyLevel-1)*500 + (intimacyExp%500));
+        renderShop();
+    }
+    function addHistory(desc, change) { pointsHistory.push({desc, change}); updateUI(); }
+    function addIntimacy(exp) {
+        let newExp = intimacyExp + exp;
+        let levelUp = 0;
+        while(newExp>=500){ newExp-=500; intimacyLevel++; levelUp++;}
+        intimacyExp = newExp;
+        if(levelUp>0) showToast(`✨ 亲密度升级 Lv.${intimacyLevel} ✨`);
+        updateUI();
+    }
+    function addCarrot(amount) {
+        carrot += amount;
+        if(carrot<0) carrot=0;
+        if(amount!==0) addHistory(amount>0? `获得胡萝卜`:`消耗胡萝卜`, amount);
+        updateUI();
+    }
+    function showToast(msg) {
+        let t = document.getElementById('toastMsg');
+        t.innerText = msg;
+        t.style.opacity='1';
+        setTimeout(()=>t.style.opacity='0',1500);
+    }
+    // 互动操作
+    function feedCarrot(){ if(carrot>=5){ addCarrot(-5); addIntimacy(10); showToast("🥕喂食+10亲密度");} else showToast("胡萝卜不足"); }
+    function cleanPen(){ addIntimacy(8); showToast("🧹兔舍干净+8"); }
+    function laserToy(){ if(carrot>=8){ addCarrot(-8); addIntimacy(15); showToast("💡激光玩具+15");} else showToast("胡萝卜不足"); }
+    function aiChat(){ addIntimacy(12); showToast("🤖AI聊天+12"); }
+    function doBookingFeed(){ if(feedingSlots<=0) showToast("今日预约已满"); else { feedingSlots--; addCarrot(10); addIntimacy(5); myBookings.unshift({name:"🥣喂食时光", time:"10:00"}); showToast("预约成功！"); updateUI(); } }
+    function snackBook(){ if(carrot>=15){ addCarrot(-15); addIntimacy(8); myBookings.unshift({name:"🍪加餐零食", time:"15:00"}); showToast("预约零食成功"); } else showToast("胡萝卜不足"); }
+    function musicBook(){ addIntimacy(8); myBookings.unshift({name:"🎵音乐哄睡", time:"21:00"}); showToast("预约哄睡成功"); }
+    function sendGift(friend){ if(carrot>=15){ addCarrot(-15); addIntimacy(6); showToast(`送给${friend}胡萝卜，+6亲密度`); } else showToast("胡萝卜不够"); }
+    
+    // 答题系统 (大量题库)
+    let currentQuestions=[], currentIdx=0, currentScore=0, mode=null;
+    function fetchRandomQuestions(count){
+        let shuffled = [...fullQuizDB];
+        for(let i=shuffled.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; }
+        return shuffled.slice(0,count);
+    }
+    function renderQuestion(){
+        if(currentIdx>=currentQuestions.length){
+            let rewardCarrot = currentScore*12 + (mode==='challenge'?15:25);
+            let rewardExp = currentScore*6 + 10;
+            addCarrot(rewardCarrot);
+            addIntimacy(rewardExp);
+            showToast(`${mode==='challenge'?'挑战完成':'竞赛完成'}！正确${currentScore}/${currentQuestions.length}  +${rewardCarrot}🥕 +${rewardExp}❤️`);
+            closeModal(); return;
+        }
+        let q = currentQuestions[currentIdx];
+        let html = `<div class="question-text" style="font-weight:bold; margin:10px 0;">${q.question}</div>`;
+        q.options.forEach((opt,i)=>{
+            html += `<button class="option-btn" data-opt="${i}">${String.fromCharCode(65+i)}. ${opt}</button>`;
+        });
+        html += `<div style="margin-top:12px;">进度:${currentIdx+1}/${currentQuestions.length} 得分:${currentScore}</div>`;
+        document.getElementById('questionArea').innerHTML = html;
+        document.querySelectorAll('.option-btn').forEach(btn=>{
+            btn.addEventListener('click',(e)=>{
+                let selected = parseInt(btn.dataset.opt);
+                if(selected===currentQuestions[currentIdx].answer){ currentScore++; showToast("✅正确");}
+                else showToast(`❌错误 正确答案是${String.fromCharCode(65+currentQuestions[currentIdx].answer)}`);
+                currentIdx++;
+                renderQuestion();
+            });
+        });
+    }
+    function openQuiz(modeType){
+        mode=modeType;
+        currentIdx=0; currentScore=0;
+        let count = mode==='challenge'?3:5;
+        currentQuestions = fetchRandomQuestions(count);
+        document.getElementById('modalTitle').innerText = mode==='challenge'?"⚡ 每日挑战 (非遗闯关)":"📖 非遗知识竞赛 (连南瑶乡)";
+        document.getElementById('quizResult').innerHTML = "";
+        renderQuestion();
+        document.getElementById('quizModal').classList.add('show');
+    }
+    function closeModal(){ document.getElementById('quizModal').classList.remove('show'); }
+    
+    // 兑换商店
+    const shopList = [
+        { name: "✨ 彩虹胡萝卜肥料", cost: 80, effect: "+30亲密度", type:"intimacy", value:30 },
+        { name: "🐰 限定兔耳头饰", cost: 150, effect: "装扮 + 50亲密度", type:"intimacy", value:50 },
+        { name: "🎋 非遗竹编玩具", cost: 200, effect: "+80亲密度", type:"intimacy", value:80 },
+        { name: "🌾 瑶乡伴手礼盒", cost: 120, effect: "+45亲密度", type:"intimacy", value:45 }
+    ];
+    function renderShop(){
+        let shopDiv = document.getElementById('shopItems');
+        if(!shopDiv) return;
+        let html = '';
+        shopList.forEach((item,idx)=>{
+            html += `<div style="display:flex; justify-content:space-between; margin:8px 0; background:#FFF7EF; padding:8px; border-radius:30px;"><div><strong>${item.name}</strong><div style="font-size:10px;">${item.effect}</div></div><button class="buyItem" data-idx="${idx}" style="background:#E67E22; border:none; padding:4px 12px; border-radius:30px; color:white;">${item.cost}🥕</button></div>`;
+        });
+        shopDiv.innerHTML = html;
+        document.querySelectorAll('.buyItem').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                let idx = parseInt(btn.dataset.idx);
+                let item = shopList[idx];
+                if(carrot >= item.cost){
+                    addCarrot(-item.cost);
+                    if(item.type==='intimacy') addIntimacy(item.value);
+                    myOrders.unshift({name: item.name, cost: item.cost});
+                    showToast(`兑换成功！获得 ${item.effect}`);
+                    updateUI();
+                } else showToast("胡萝卜不足");
+            });
+        });
+    }
+    
+    // 导航切换
+    function switchMainView(viewId){
+        document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view'));
+        document.getElementById(viewId+'View').classList.add('active-view');
+        document.querySelectorAll('.nav-item').forEach(nav=>{
+            if(nav.dataset.view===viewId) nav.classList.add('active');
+            else nav.classList.remove('active');
+        });
+        if(viewId === 'points') updateUI();
+        if(viewId === 'redemption') renderShop();
+    }
+    function switchSubTab(subId){
+        document.querySelectorAll('.sub-page').forEach(p=>p.classList.remove('active-sub'));
+        document.getElementById(subId).classList.add('active-sub');
+        document.querySelectorAll('.sub-tab').forEach(tab=>{
+            if(tab.dataset.sub === subId) tab.classList.add('active');
+            else tab.classList.remove('active');
+        });
+    }
+    
+    // 事件绑定
+    document.getElementById('enterBtn').addEventListener('click',()=>{
+        document.getElementById('coverOverlay').style.opacity='0';
+        setTimeout(()=>{
+            document.getElementById('coverOverlay').style.display='none';
+            document.getElementById('mainApp').style.display='block';
+        },400);
+        showToast("🐰 欢迎来到瑶乡萌兔世界！吉卜力风格兔兔等你来玩~");
+    });
+    document.getElementById('challengeBtn')?.addEventListener('click',()=>openQuiz('challenge'));
+    document.getElementById('quizBtn')?.addEventListener('click',()=>openQuiz('quiz'));
+    document.getElementById('feedCarrotBtn')?.addEventListener('click',feedCarrot);
+    document.getElementById('cleanPenBtn')?.addEventListener('click',cleanPen);
+    document.getElementById('laserToyBtn')?.addEventListener('click',laserToy);
+    document.getElementById('aiChatBtn')?.addEventListener('click',aiChat);
+    document.getElementById('feedBookingBtn')?.addEventListener('click',doBookingFeed);
+    document.getElementById('snackBookingBtn')?.addEventListener('click',snackBook);
+    document.getElementById('musicBookingBtn')?.addEventListener('click',musicBook);
+    document.querySelectorAll('.friend-gift').forEach(btn=>btn.addEventListener('click',()=>sendGift(btn.dataset.friend)));
+    document.getElementById('visitOfflineBtn')?.addEventListener('click',()=>showToast("拜访离线兔友，留言板即将开放~"));
+    document.getElementById('closeModalBtn')?.addEventListener('click',closeModal);
+    document.getElementById('editNicknameBtn')?.addEventListener('click',()=>{ let newName=prompt("输入新昵称",nickname); if(newName) { nickname=newName; updateUI(); showToast(`昵称已更改为${nickname}`); } });
+    document.getElementById('feedbackBtn')?.addEventListener('click',()=>showToast("感谢反馈，客服兔兔会尽快回复~"));
+    document.querySelectorAll('.nav-item').forEach(nav=>{ nav.addEventListener('click',()=>{ switchMainView(nav.dataset.view); }); });
+    document.querySelectorAll('.sub-tab').forEach(tab=>{ tab.addEventListener('click',()=>{ switchSubTab(tab.dataset.sub); }); });
+    
+    updateRankList();
+    updateUI();
+    switchMainView('interaction');
+    switchSubTab('interactSub');
+</script>
+</body>
+</html>
